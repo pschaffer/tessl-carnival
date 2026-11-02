@@ -919,9 +919,9 @@ function cart(ctx: Ctx, prop: Prop, t: number) {
       d - 0.12,
       19,
       10,
-      'rgba(255,255,255,0.35)',
-      'rgba(255,255,255,0.45)',
-      'rgba(255,255,255,0.3)',
+      'rgba(200,190,170,0.25)',
+      'rgba(200,190,170,0.3)',
+      'rgba(200,190,170,0.2)',
     );
     for (let i = 0; i < 9; i++)
       oval(
@@ -1033,7 +1033,11 @@ function ticketBooth(ctx: Ctx, prop: Prop) {
   }
   box(ctx, x - 0.05, y - 0.05, 0.8, 0.8, 26, 3, palette.blue, palette.blueShade, palette.blueShade);
   onPlane(ctx, at(x + 0.35, y + 0.35, 38), () =>
-    signBoard(ctx, 'TICKETS', 28, 9, { board: palette.gold, edge: palette.red, text: palette.red }),
+    signBoard(ctx, 'NO REFUNDS', 28, 9, {
+      board: palette.gold,
+      edge: palette.red,
+      text: palette.red,
+    }),
   );
 }
 
@@ -1669,7 +1673,7 @@ export function drawArch(ctx: Ctx, map: MidwayMap, t: number) {
     ctx.beginPath();
     ctx.ellipse(0, -10, 12, 9, 0, Math.PI, Math.PI * 2);
     ctx.fill();
-    signBoard(ctx, 'TESSL CARNIVAL', 92, 20, {
+    signBoard(ctx, 'TESSL CARNIVAL OF DREAD', 92, 20, {
       board: palette.wood,
       edge: palette.woodDark,
       text: palette.gold,

@@ -120,7 +120,7 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
       depth: booth.x + booth.y + 2,
       box: boothBounds(booth),
       booth,
-      name: booth.gameId ? (names.get(booth.gameId) ?? booth.gameId) : 'Coming soon',
+      name: booth.gameId ? (names.get(booth.gameId) ?? booth.gameId) : 'Abandoned',
     })),
     ...map.props.map((prop) => ({
       depth: prop.x + prop.y + (prop.w + prop.h) / 2,
@@ -429,7 +429,7 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
       const c = toScreen(inReach.x + 1, inReach.y + 1);
       label(
         ctx,
-        'Press E to play',
+        'Press E to enter, if you dare',
         (c.x - cam.x) * zoom,
         (c.y - BOOTH_SIGN_HEIGHT - 46 - cam.y) * zoom,
       );

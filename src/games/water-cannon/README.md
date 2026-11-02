@@ -1,16 +1,16 @@
-# Water Cannon
+# Blood Cannon
 
-Soak the targets on the three rails before your tank runs dry.
+Drench the staring eyes on the three rails in blood before your tank runs dry.
 
 ## How to play
 
-- Move the mouse to aim the cannon, and click to fire a shot of water.
+- Move the mouse to aim the cannon, and click to fire a shot of blood.
 - You have 15 shots. The game ends when the tank is empty and the last shot has landed.
 - Click again on the game over screen to play another round.
 
 ## Scoring
 
-Each target scores 10 points for every 60 px/s of speed, rounded up:
+Each eye scores 10 points for every 60 px/s of speed, rounded up:
 
 | Rail   | Speed    | Points |
 | ------ | -------- | ------ |
