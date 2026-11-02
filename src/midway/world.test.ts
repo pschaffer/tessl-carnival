@@ -4,15 +4,18 @@ import {
   canStand,
   createVisitors,
   createWalker,
+  fart,
   findPath,
   followPath,
   inputDirection,
   isBlocked,
   layoutMidway,
   pathToBooth,
+  PUFF_LIFE,
   seededRandom,
   toScreen,
   toTile,
+  updatePuffs,
   updateVisitor,
   walk,
 } from './world';
@@ -179,5 +182,36 @@ describe('visitors', () => {
       expect(isBlocked(map, Math.floor(visitor.x), Math.floor(visitor.y))).toBe(false);
       expect(visitor.stride).toBeGreaterThan(0);
     }
+  });
+});
+
+describe('fart', () => {
+  it('puffs from behind the walker, whichever way they face', () => {
+    const walker = createWalker({ x: 4.5, y: 4.5 });
+    const feet = toScreen(walker.x, walker.y);
+    const right = fart(walker, seededRandom(1));
+    expect(right.length).toBeGreaterThan(0);
+    for (const puff of right) {
+      expect(puff.x).toBeLessThan(feet.x);
+      expect(puff.y).toBeLessThan(feet.y);
+      expect(puff.drift).toBe(-1);
+    }
+    walker.flipped = true;
+    for (const puff of fart(walker, seededRandom(1))) {
+      expect(puff.x).toBeGreaterThan(feet.x);
+      expect(puff.drift).toBe(1);
+    }
+  });
+
+  it('drifts away and clears up', () => {
+    const walker = createWalker({ x: 4.5, y: 4.5 });
+    const puffs = fart(walker, seededRandom(1));
+    const later = updatePuffs(puffs, 0.5);
+    expect(later).toHaveLength(puffs.length);
+    expect(later[0].x).toBeLessThan(puffs[0].x);
+    expect(later[0].y).toBeLessThan(puffs[0].y);
+    let left = later;
+    for (let i = 0; i < 10; i++) left = updatePuffs(left, PUFF_LIFE / 4);
+    expect(left).toHaveLength(0);
   });
 });

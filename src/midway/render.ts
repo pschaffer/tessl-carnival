@@ -7,7 +7,9 @@ import {
   type BoothSlot,
   type MidwayMap,
   type Point,
+  PUFF_LIFE,
   type Prop,
+  type Puff,
   type Rect,
   type Walker,
 } from './world';
@@ -1728,6 +1730,19 @@ export function drawFloaters(ctx: Ctx, floaters: readonly Floater[]) {
     ctx.stroke();
     oval(ctx, f.x + sway, f.y, 5, 6.5, f.color);
     oval(ctx, f.x + sway - 1.8, f.y - 2.5, 1.4, 2, 'rgba(255,255,255,0.6)');
+  }
+  ctx.globalAlpha = 1;
+}
+
+/** The player's farts: little green clouds that grow and fade. */
+export function drawPuffs(ctx: Ctx, puffs: readonly Puff[]) {
+  for (const puff of puffs) {
+    if (puff.age < 0) continue;
+    const life = puff.age / PUFF_LIFE;
+    const r = puff.size * (1 + life * 1.5);
+    ctx.globalAlpha = 0.85 * (1 - life);
+    oval(ctx, puff.x, puff.y + r * 0.2, r, r * 0.8, palette.puffShade);
+    oval(ctx, puff.x - r * 0.15, puff.y, r * 0.85, r * 0.7, palette.puff);
   }
   ctx.globalAlpha = 1;
 }
