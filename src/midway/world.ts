@@ -72,7 +72,7 @@ export interface MidwayMap {
   spawn: Point;
 }
 
-export const CART_KINDS = ['Popcorn', 'Cotton candy', 'Ice cream', 'Drinks'] as const;
+export const CART_KINDS = ['Teeth', 'Hair candy', 'Brain freeze', 'Blood'] as const;
 
 const MAP_WIDTH = 24;
 const AVENUE_X = 11;

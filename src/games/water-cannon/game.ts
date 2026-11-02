@@ -141,13 +141,14 @@ function draw(
     ctx.beginPath();
     ctx.arc(target.x, target.y, target.radius * 0.6, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = colors.stripeB;
+    // The pupil.
+    ctx.fillStyle = colors.background;
     ctx.beginPath();
     ctx.arc(target.x, target.y, target.radius * 0.25, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  ctx.fillStyle = '#4fc3f7';
+  ctx.fillStyle = colors.danger;
   for (const shot of state.shots) {
     ctx.beginPath();
     ctx.arc(shot.x, shot.y, 5, 0, Math.PI * 2);
@@ -182,7 +183,7 @@ function draw(
   ctx.textAlign = 'left';
   ctx.fillText(`Score ${state.score}`, 16, HEIGHT - 20);
   ctx.textAlign = 'right';
-  ctx.fillText(`Water ${state.tank}/${TANK_SIZE}`, WIDTH - 16, HEIGHT - 20);
+  ctx.fillText(`Blood ${state.tank}/${TANK_SIZE}`, WIDTH - 16, HEIGHT - 20);
 
   if (state.phase === 'over') {
     ctx.fillStyle = colors.background;
@@ -192,17 +193,18 @@ function draw(
     ctx.textAlign = 'center';
     ctx.fillStyle = colors.accent;
     ctx.font = canvasFont('title', 'bold');
-    ctx.fillText(`Tank empty! You scored ${state.score}`, WIDTH / 2, HEIGHT / 2);
+    ctx.fillText(`Drained dry. ${state.score} souls claimed`, WIDTH / 2, HEIGHT / 2);
     ctx.fillStyle = colors.text;
     ctx.font = canvasFont('body');
-    ctx.fillText('Click to play again', WIDTH / 2, HEIGHT / 2 + 40);
+    ctx.fillText('Click to feed it again', WIDTH / 2, HEIGHT / 2 + 40);
   }
 }
 
 export const waterCannon: CarnivalGame = {
   id: 'water-cannon',
-  name: 'Water Cannon',
-  description: 'Soak the targets before your tank runs dry. Faster targets score more.',
+  name: 'Blood Cannon',
+  description:
+    'Drench the staring eyes in blood before your tank runs dry. Faster eyes score more.',
 
   start(canvas) {
     const ctx = canvas.getContext('2d');

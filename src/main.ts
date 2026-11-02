@@ -12,17 +12,17 @@ let stop: (() => void) | undefined;
 
 function bestText(game: CarnivalGame): string {
   const best = bestScore(game.id);
-  return best === undefined ? 'No scores yet' : `Best: ${best}`;
+  return best === undefined ? 'No victims yet' : `Most souls: ${best}`;
 }
 
 function renderMidway() {
   document.body.dataset.view = 'midway';
   app.innerHTML = `
     <section class="midway">
-      <canvas class="midway-map" aria-label="The carnival midway. Walk up to a booth to play its game."></canvas>
+      <canvas class="midway-map" aria-label="The carnival midway. Walk up to a booth, if you dare."></canvas>
       <p class="midway-help">
-        <kbd>WASD</kbd> or <kbd>arrows</kbd> to walk, or click where you want to go.
-        <kbd>E</kbd> to play. <kbd>Space</kbd> to fart.
+        <kbd>WASD</kbd> or <kbd>arrows</kbd> to shamble, or click where you want to drift.
+        <kbd>E</kbd> to enter. <kbd>Space</kbd> to fart.
       </p>
       <p class="midway-credit">
         Built with
@@ -40,14 +40,14 @@ function renderMidway() {
         </span>
       </p>
       <nav class="midway-guide" aria-label="Booths">
-        <h2>Booths</h2>
+        <h2>Booths of the damned</h2>
         <ul></ul>
       </nav>
       <div class="booth-card" aria-live="polite" hidden>
         <h2></h2>
         <p class="description"></p>
         <p class="best"></p>
-        <a class="play">Play</a>
+        <a class="play">Enter</a>
       </div>
     </section>`;
 
@@ -73,9 +73,9 @@ function renderMidway() {
     const game = booth?.gameId ? registry.get(booth.gameId) : undefined;
     card.hidden = booth === undefined;
     card.classList.toggle('closed', booth !== undefined && !game);
-    card.querySelector('h2')!.textContent = game?.name ?? 'Coming soon';
+    card.querySelector('h2')!.textContent = game?.name ?? 'Abandoned';
     card.querySelector('.description')!.textContent =
-      game?.description ?? 'This booth is waiting for a game. Build one and it opens here.';
+      game?.description ?? 'Nothing lives here yet. Build a game and it crawls out of the dark.';
     card.querySelector('.best')!.textContent = game ? bestText(game) : '';
     const link = card.querySelector<HTMLAnchorElement>('.play')!;
     link.hidden = !game;
@@ -95,7 +95,7 @@ function renderGame(game: CarnivalGame) {
   app.innerHTML = `
     <section class="game">
       <div class="game-header">
-        <a href="#/">← Back to the midway</a>
+        <a href="#/">← Flee to the midway</a>
         <h1></h1>
       </div>
       <canvas></canvas>
