@@ -47,6 +47,8 @@ export const palette = {
   closed: '#a99cc4',
   closedShade: '#8a7daa',
   white: '#ffffff',
+  puff: '#cfdc8a',
+  puffShade: '#b3c46a',
 
   skins: ['#f1c27d', '#c68642', '#8d5524', '#e0ac69', '#ffdbac'],
   hairs: ['#3b2219', '#1b1035', '#a55728', '#e6c35c', '#6b4429'],

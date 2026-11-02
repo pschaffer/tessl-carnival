@@ -12,6 +12,7 @@ import {
   drawField,
   drawGroundLayer,
   drawProp,
+  drawPuffs,
   drawWalker,
   groundBounds,
   HORIZON,
@@ -28,6 +29,7 @@ import {
   boothInReach,
   createVisitors,
   createWalker,
+  fart,
   findPath,
   followPath,
   inputDirection,
@@ -36,11 +38,13 @@ import {
   strollTiles,
   toScreen,
   toTile,
+  updatePuffs,
   updateVisitor,
   walk,
   type BoothSlot,
   type Point,
   type Prop,
+  type Puff,
 } from './world';
 
 export interface MidwayOptions {
@@ -75,6 +79,34 @@ const MIN_QUALITY = 0.5;
 /** Where the player stood when they last left the midway, for this page load. */
 let returnTo: Point | undefined;
 
+/** A short, low raspberry, made up on the spot so there's no sound file to load. */
+function playFart(audio: AudioContext) {
+  const now = audio.currentTime;
+  const length = 0.35 + Math.random() * 0.2;
+  const voice = audio.createOscillator();
+  voice.type = 'sawtooth';
+  voice.frequency.setValueAtTime(90 + Math.random() * 40, now);
+  voice.frequency.exponentialRampToValueAtTime(45, now + length);
+  // A fast wobble on the pitch gives it the flutter.
+  const flutter = audio.createOscillator();
+  flutter.frequency.value = 25 + Math.random() * 15;
+  const flutterDepth = audio.createGain();
+  flutterDepth.gain.value = 20;
+  flutter.connect(flutterDepth).connect(voice.frequency);
+  const muffle = audio.createBiquadFilter();
+  muffle.type = 'lowpass';
+  muffle.frequency.value = 600;
+  const volume = audio.createGain();
+  volume.gain.setValueAtTime(0.0001, now);
+  volume.gain.exponentialRampToValueAtTime(0.25, now + 0.03);
+  volume.gain.exponentialRampToValueAtTime(0.0001, now + length);
+  voice.connect(muffle).connect(volume).connect(audio.destination);
+  voice.start(now);
+  flutter.start(now);
+  voice.stop(now + length);
+  flutter.stop(now + length);
+}
+
 export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): MidwayControls {
   const ctx = canvas.getContext('2d');
   if (!ctx) throw new Error('Canvas 2D is not available');
@@ -106,6 +138,8 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
     speed: 3 + Math.random() * 4,
   }));
   const floaters: Floater[] = [];
+  let puffs: Puff[] = [];
+  let audio: AudioContext | undefined;
   const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   let nextFloater = 2;
   let inReach: BoothSlot | undefined;
@@ -159,6 +193,16 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
     } else if (PLAY_KEYS.has(event.code) && !isControl(event.target) && inReach?.gameId) {
       event.preventDefault();
       play(inReach);
+    } else if (event.code === 'Space' && !isControl(event.target)) {
+      event.preventDefault();
+      if (event.repeat) return;
+      puffs.push(...fart(player, Math.random));
+      try {
+        audio ??= new AudioContext();
+        playFart(audio);
+      } catch {
+        // No sound on this browser: the puff still shows.
+      }
     }
   };
   const onKeyUp = (event: KeyboardEvent) => keys.delete(event.code);
@@ -377,6 +421,7 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
     if (onScreen(archBounds(map))) faded(archBounds(map), Infinity, () => drawArch(ctx, map, t));
     drawBunting(ctx, map, t, visible);
     drawFloaters(ctx, floaters);
+    drawPuffs(ctx, puffs);
 
     // The prompt over the booth in reach, at full resolution.
     if (inReach?.gameId) {
@@ -429,6 +474,7 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
     }
 
     updateFloaters(dt);
+    puffs = updatePuffs(puffs, dt);
     updateCamera(dt);
     draw(time / 1000);
     frame = requestAnimationFrame(loop);
@@ -448,6 +494,7 @@ export function startMidway(canvas: HTMLCanvasElement, options: MidwayOptions): 
       window.removeEventListener('blur', onBlur);
       canvas.removeEventListener('pointerdown', onPointerDown);
       canvas.removeEventListener('pointermove', onPointerMove);
+      void audio?.close();
     },
   };
 }

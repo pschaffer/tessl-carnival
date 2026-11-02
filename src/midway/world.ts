@@ -513,3 +513,42 @@ export function updateVisitor(
   visitor.path = findPath(map, visitor, tile) ?? [];
   visitor.rest = 1;
 }
+
+/** A little cloud of fart, drifting off behind someone, in world pixels. */
+export interface Puff {
+  x: number;
+  y: number;
+  /** Seconds since the fart. */
+  age: number;
+  /** Which way it drifts on screen: -1 is left, 1 is right. */
+  drift: number;
+  size: number;
+}
+
+/** How long a puff hangs in the air, in seconds. */
+export const PUFF_LIFE = 1.4;
+
+/** Lets one rip: a few puffs from behind the walker, drifting away from where they face. */
+export function fart(walker: Walker, random: () => number): Puff[] {
+  const p = toScreen(walker.x, walker.y);
+  const behind = walker.flipped ? 1 : -1;
+  return Array.from({ length: 3 }, (_, i) => ({
+    x: p.x + behind * (3 + i * 2) + (random() - 0.5) * 2,
+    y: p.y - 9 + (random() - 0.5) * 3,
+    age: -i * 0.08,
+    drift: behind,
+    size: 2.5 + random() * 1.5,
+  }));
+}
+
+/** Puffs grow, rise and drift; the ones past their time are gone. */
+export function updatePuffs(puffs: readonly Puff[], dt: number): Puff[] {
+  return puffs
+    .map((puff) => ({
+      ...puff,
+      age: puff.age + dt,
+      x: puff.age + dt > 0 ? puff.x + puff.drift * 10 * dt : puff.x,
+      y: puff.age + dt > 0 ? puff.y - 6 * dt : puff.y,
+    }))
+    .filter((puff) => puff.age < PUFF_LIFE);
+}
